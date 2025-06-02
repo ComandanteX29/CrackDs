@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bienvenida Kelly</title>
+<link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background: linear-gradient(135deg, #000000, #430027, #a8046c);
+        color: #fff;
+        font-family: 'Sacramento', cursive;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 4em;
+        margin-bottom: 20px;
+        animation: latido 1.5s infinite;
+    }
+
+    p {
+        font-size: 1.5em;
+        max-width: 600px;
+    }
+
+    @keyframes latido {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .heart {
+        font-size: 5em;
+        margin-top: 20px;
+        animation: latido 1.5s infinite;
+    }
+
+    /* Estilo del botón en forma de corazón */
+    .heart-button {
+        background-color: #ff4da6;
+        color: white;
+        font-size: 1.5em;
+        border: none;
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        margin-top: 20px;
+        transition: transform 0.3s;
+    }
+
+    .heart-button:hover {
+        transform: scale(1.2);
+    }
+</style>
+</head>
+<body>
+    <h1>¡Bienvenida Kelly! 💖</h1>
+    <p>Has iniciado sesión correctamente. Espero que disfrutes de esta página especial hecha con mucho amor.</p>
+    <div class="heart">❤️</div>
+
+    <!-- Botón en forma de corazón -->
+    <button class="heart-button" onclick="location.href='matrix.html'">💖</button>
+    <p>Presiona aquí para ver algo especial</p>
+</body>
+</html>

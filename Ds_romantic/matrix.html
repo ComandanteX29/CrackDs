@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Matrix Rosa con Fuegos Artificiales para Kelly</title>
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: 'Brush Script MT', cursive, monospace;
+  }
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  #matrixCanvas { z-index: 1; }
+  #fireworksCanvas { z-index: 2; pointer-events: none; }
+  #centerText {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ff4da6;
+    font-size: 4em;
+    z-index: 3;
+    text-shadow: 0 0 10px #ff4da6, 0 0 20px #ff4da6;
+    user-select: none;
+    pointer-events: none;
+    animation: heartbeat 1.5s infinite;
+  }
+  @keyframes heartbeat {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.1); }
+  }
+  .colorPicker {
+    position: fixed;
+    top: 20px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #ff4da6;
+    z-index: 4;
+  }
+  #matrixColorPicker { right: 20px; }
+  #textColorPicker { right: 70px; }
+  #playBtn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 5;
+    background: #ff4da6;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #ff4da6;
+  }
+  #backgroundSelector {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+
+<!-- Canvas -->
+<canvas id="matrixCanvas"></canvas>
+<canvas id="fireworksCanvas"></canvas>
+
+<!-- Texto principal -->
+<div id="centerText">Kelly &amp; Daniel</div>
+
+<!-- Selectores de color -->
+<input type="color" id="matrixColorPicker" class="colorPicker" value="#ff4da6">
+<input type="color" id="textColorPicker" class="colorPicker" value="#ff4da6">
+
+<!-- Botón de música -->
+<button id="playBtn">Play</button>
+
+<!-- Selector de fondo -->
+<select id="backgroundSelector">
+  <option value="black">Fondo Negro</option>
+  <option value="pink">Fondo Rosa</option>
+  <option value="purple">Fondo Morado</option>
+</select>
+
+<!-- Audio -->
+<audio id="bgMusic" src="musica.mp3" loop></audio>
+
+<script>
+// Matrix
+(function () {
+  const canvas = document.getElementById("matrixCanvas");
+  const ctx = canvas.getContext("2d");
+  function ajustarCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  ajustarCanvas();
+  window.addEventListener("resize", ajustarCanvas);
+
+  const palabra = "TE AMO";
+  const size = 18;
+  const columnas = Math.floor(window.innerWidth / size);
+  const drops = Array(columnas).fill(1);
+  let matrixColor = "#ff4da6";
+
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = matrixColor;
+    ctx.font = `${size}px monospace`;
+
+    for (let i = 0; i < drops.length; i++) {
+      const letra = palabra[drops[i] % palabra.length];
+      ctx.fillText(letra, i * size, drops[i] * size);
+
+      if (drops[i] * size > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 50);
+
+  document.getElementById("matrixColorPicker").addEventListener("input", e => {
+    matrixColor = e.target.value;
+  });
+})();
+
+// Fuegos artificiales
+(function () {
+  const canvas = document.getElementById("fireworksCanvas");
+  const ctx = canvas.getContext("2d");
+  let cw, ch;
+  function resize() {
+    cw = canvas.width = window.innerWidth;
+    ch = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  function random(min, max) { return Math.random() * (max - min) + min; }
+  class Particle {
+    constructor(x, y, color) {
+      this.x = x; this.y = y; this.color = color;
+      this.radius = random(4, 8);
+      this.alpha = 1;
+      this.velocity = { x: random(-4, 4), y: random(-4, 4) };
+      this.friction = 0.95;
+      this.gravity = 0.05;
+      this.decay = random(0.005, 0.01);
+    }
+    update() {
+      this.velocity.x *= this.friction;
+      this.velocity.y *= this.friction;
+      this.velocity.y += this.gravity;
+      this.x += this.velocity.x;
+      this.y += this.velocity.y;
+      this.alpha -= this.decay;
+      if (this.alpha < 0) this.alpha = 0;
+    }
+    draw(ctx) {
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+  class Firework {
+    constructor(x, y) {
+      this.x = x; this.y = y;
+      this.particles = [];
+      this.color = `hsl(${Math.floor(random(300, 350))}, 100%, 70%)`;
+      this.createParticles();
+    }
+    createParticles() {
+      for (let i = 0; i < 30; i++) {
+        this.particles.push(new Particle(this.x, this.y, this.color));
+      }
+    }
+    update() {
+      this.particles.forEach(p => p.update());
+      this.particles = this.particles.filter(p => p.alpha > 0);
+    }
+    draw(ctx) { this.particles.forEach(p => p.draw(ctx)); }
+    isDone() { return this.particles.length === 0; }
+  }
+  const fireworks = [];
+  function loop() {
+    ctx.clearRect(0, 0, cw, ch);
+    if (Math.random() < 0.05) {
+      fireworks.push(new Firework(random(100, cw - 100), random(100, ch / 2)));
+    }
+    fireworks.forEach((fw, i) => {
+      fw.update();
+      fw.draw(ctx);
+      if (fw.isDone()) fireworks.splice(i, 1);
+    });
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// Color del texto
+const centerText = document.getElementById("centerText");
+document.getElementById("textColorPicker").addEventListener("input", e => {
+  const newColor = e.target.value;
+  centerText.style.color = newColor;
+  centerText.style.textShadow = `0 0 10px ${newColor}, 0 0 20px ${newColor}`;
+});
+
+// Música
+const playBtn = document.getElementById("playBtn");
+const bgMusic = document.getElementById("bgMusic");
+let isPlaying = false;
+playBtn.addEventListener("click", () => {
+  if (!isPlaying) {
+    bgMusic.play();
+    playBtn.textContent = "Pause";
+  } else {
+    bgMusic.pause();
+    playBtn.textContent = "Play";
+  }
+  isPlaying = !isPlaying;
+});
+
+// Cambio de fondo
+const backgroundSelector = document.getElementById("backgroundSelector");
+backgroundSelector.addEventListener("change", e => {
+  document.body.style.background = e.target.value;
+});
+</script>
+</body>
+</html>

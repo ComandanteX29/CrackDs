@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Página Especial para Kelly</title>
+<!-- Google Fonts para una tipografía más romántica -->
+<link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+<style>
+    /* Fondo degradado */
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;  /* Centrado horizontal */
+        align-items: center;      /* Centrado vertical */
+        height: 100vh;            /* Ocupa toda la altura de la ventana */
+        margin: 0;
+        background: linear-gradient(135deg, #000000, #430027, #a8046c);
+        color: #fff;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Estilo del título */
+    h1 {
+        color: #ffffff;
+        font-size: 3em;
+        font-family: 'Sacramento', cursive;
+        animation: latido 1.5s infinite;
+        margin-bottom: 30px;
+    }
+
+    /* Animación de latido */
+    @keyframes latido {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    /* Estilo del formulario */
+    form {
+        background-color: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+        padding: 20px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 200px;
+        padding: 10px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 5px;
+        outline: none;
+        font-size: 1em;
+    }
+
+    input[type="submit"] {
+        background-color: #a8046c;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #ff4da6;
+    }
+</style>
+</head>
+<body>
+    <h1>Kelly, I love you so much 💖</h1>
+
+    <!-- Formulario de login -->
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Usuario" required><br>
+        <input type="password" id="password" placeholder="Contraseña" required><br>
+        <input type="submit" value="Iniciar sesión">
+    </form>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Evita que se envíe el formulario
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Validación
+            if (username === 'Kelly Domingo' && password === 'danielteamomucho') {
+                // Redirección a otra página (por ejemplo: bienvenida.html)
+                window.location.href = 'bienvenida.html';
+            } else {
+                alert('Usuario o contraseña incorrectos 💔');
+            }
+        });
+    </script>
+</body>
+</html>
