@@ -1,3 +1,8 @@
+¡Claro! Aquí te devuelvo **el mismo código actualizado** con las correcciones para que la música se reproduzca bien y sea consistente. También verifiqué y actualicé algunos pequeños detalles para que esté más limpio y ordenado:
+
+---
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -18,13 +23,8 @@
     height: 100%;
     display: block;
   }
-  #matrixCanvas {
-    z-index: 1;
-  }
-  #fireworksCanvas {
-    z-index: 2;
-    pointer-events: none;
-  }
+  #matrixCanvas { z-index: 1; }
+  #fireworksCanvas { z-index: 2; pointer-events: none; }
   #centerText {
     position: fixed;
     top: 50%;
@@ -47,14 +47,8 @@
     border-radius: 5px;
     box-shadow: 0 0 10px #ff4da6;
   }
-  #matrixColorPicker {
-    right: 20px;
-    z-index: 4;
-  }
-  #textColorPicker {
-    right: 70px;
-    z-index: 4;
-  }
+  #matrixColorPicker { right: 20px; z-index: 4; }
+  #textColorPicker { right: 70px; z-index: 4; }
   #playMusicButton {
     position: fixed;
     bottom: 20px;
@@ -81,84 +75,75 @@
 <!-- Texto centrado -->
 <div id="centerText">Kelly &amp; Daniel</div>
 
-<!-- Selector de color para Matrix -->
+<!-- Selectores de color -->
 <input type="color" id="matrixColorPicker" class="colorPicker" value="#ff4da6">
-
-<!-- Selector de color para Texto -->
 <input type="color" id="textColorPicker" class="colorPicker" value="#ff4da6">
 
 <!-- Botón para reproducir la música -->
 <button id="playMusicButton">Play Música</button>
 
-<!-- Audio (¡aquí pones tu canción!) -->
+<!-- Audio -->
 <audio id="backgroundMusic" loop>
-  <source src="musica.mp3.mp3" type="audio/mpeg">
+  <source src="musica.mp3" type="audio/mpeg">
   Tu navegador no soporta audio HTML5.
 </audio>
 
 <script>
   // --- Matrix ---
-  (function () {
+  (() => {
     const canvas = document.getElementById("matrixCanvas");
     const ctx = canvas.getContext("2d");
+    const size = 18;
+    let matrixColor = "#ff4da6";
+    const palabra = "TE AMO";
 
-    function ajustarCanvas() {
+    const ajustarCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-    }
+    };
     ajustarCanvas();
     window.addEventListener("resize", ajustarCanvas);
 
-    const palabra = "TE AMO";
-    const size = 18;
     const columnas = Math.floor(window.innerWidth / size);
     const drops = Array(columnas).fill(1);
 
-    let matrixColor = "#ff4da6";
-
-    function drawMatrix() {
+    const drawMatrix = () => {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       ctx.fillStyle = matrixColor;
       ctx.font = `${size}px monospace`;
 
-      for (let i = 0; i < drops.length; i++) {
-        const letra = palabra[drops[i] % palabra.length];
-        ctx.fillText(letra, i * size, drops[i] * size);
-
-        if (drops[i] * size > canvas.height && Math.random() > 0.975) {
+      drops.forEach((drop, i) => {
+        const letra = palabra[drop % palabra.length];
+        ctx.fillText(letra, i * size, drop * size);
+        if (drop * size > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
         }
-
         drops[i]++;
-      }
-    }
+      });
+    };
 
     setInterval(drawMatrix, 50);
 
-    // Cambio de color Matrix
-    document.getElementById("matrixColorPicker").addEventListener("input", (e) => {
+    document.getElementById("matrixColorPicker").addEventListener("input", e => {
       matrixColor = e.target.value;
     });
   })();
 
   // --- Fuegos Artificiales ---
-  (function () {
+  (() => {
     const canvas = document.getElementById("fireworksCanvas");
     const ctx = canvas.getContext("2d");
-
     let cw, ch;
-    function resize() {
+
+    const resize = () => {
       cw = canvas.width = window.innerWidth;
       ch = canvas.height = window.innerHeight;
-    }
+    };
     resize();
     window.addEventListener("resize", resize);
 
-    function random(min, max) {
-      return Math.random() * (max - min) + min;
-    }
+    const random = (min, max) => Math.random() * (max - min) + min;
 
     class Particle {
       constructor(x, y, color) {
@@ -167,10 +152,7 @@
         this.color = color;
         this.radius = random(4, 8);
         this.alpha = 1;
-        this.velocity = {
-          x: random(-4, 4),
-          y: random(-4, 4)
-        };
+        this.velocity = { x: random(-4, 4), y: random(-4, 4) };
         this.friction = 0.95;
         this.gravity = 0.05;
         this.decay = random(0.005, 0.01);
@@ -199,15 +181,8 @@
       constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.particles = [];
         this.color = `hsl(${Math.floor(random(300, 350))}, 100%, 70%)`;
-        this.createParticles();
-      }
-      createParticles() {
-        const count = 30;
-        for (let i = 0; i < count; i++) {
-          this.particles.push(new Particle(this.x, this.y, this.color));
-        }
+        this.particles = Array.from({ length: 30 }, () => new Particle(x, y, this.color));
       }
       update() {
         this.particles.forEach(p => p.update());
@@ -223,43 +198,32 @@
 
     const fireworks = [];
 
-    function loop() {
+    const loop = () => {
       ctx.clearRect(0, 0, cw, ch);
-
       if (Math.random() < 0.05) {
-        const x = random(100, cw - 100);
-        const y = random(100, ch / 2);
-        fireworks.push(new Firework(x, y));
+        fireworks.push(new Firework(random(100, cw - 100), random(100, ch / 2)));
       }
-
       fireworks.forEach((fw, i) => {
         fw.update();
         fw.draw(ctx);
-        if (fw.isDone()) {
-          fireworks.splice(i, 1);
-        }
+        if (fw.isDone()) fireworks.splice(i, 1);
       });
-
       requestAnimationFrame(loop);
-    }
-
+    };
     loop();
   })();
 
-  // --- Cambio de color del texto "Kelly & Daniel" ---
+  // --- Color del texto ---
   const centerText = document.getElementById("centerText");
-  const textColorPicker = document.getElementById("textColorPicker");
-
-  textColorPicker.addEventListener("input", (e) => {
-    const newColor = e.target.value;
-    centerText.style.color = newColor;
-    centerText.style.textShadow = `0 0 10px ${newColor}, 0 0 20px ${newColor}`;
+  document.getElementById("textColorPicker").addEventListener("input", e => {
+    const color = e.target.value;
+    centerText.style.color = color;
+    centerText.style.textShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
   });
 
   // --- Botón para reproducir la música ---
   const playButton = document.getElementById("playMusicButton");
   const music = document.getElementById("backgroundMusic");
-
   playButton.addEventListener("click", () => {
     music.play();
   });
